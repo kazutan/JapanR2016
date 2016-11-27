@@ -1,0 +1,336 @@
+---
+title: "Rで本を作りたい"
+subtitle: ""
+author: "前田和寛"
+date: "2016/11/27"
+output:
+  revealjs::revealjs_presentation:
+    pandoc_args: [
+      '--from', 'markdown+autolink_bare_uris+tex_math_single_backslash-implicit_figures'
+    ]
+    center: true
+    theme: sky
+    self_contained: false
+    reveal_plugins: ["chalkboard", "notes"]
+    reveal_options:
+      chalkboard:
+        theme: whiteboard
+    css: for-revealjs.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# はじめに
+
+## 自己紹介
+
+<div class="column1">
+- 比治山大学短期大学部
+- @kazutan (Twitter, GitHub, Qiita)
+- http://kz-md.net/
+- http://blog.kz-md.net/
+</div>
+<div class="column2">
+![icon](pics/user.png)
+</div>
+
+# R Markdwonとは
+
+## Rでドキュメント生成
+
+- Rはデータ解析
+- 実はRでドキュメントを生成することが可能
+    - R Markdownを利用
+    - その便利さ、その将来性に注目が
+
+## Rでやるメリット
+
+- 分析からレポート生成までが完結
+    - WordもExcelも(そしてぱわぽも)いらない
+    - コピペ汚染からの開放
+- 再現性の確保
+    - 同一の内容をそのまま再現できる
+- 再利用、配布が簡単
+    - コードを簡単に再利用可能
+    - テキストデータなので運用が簡単
+- 作るのが簡単
+    - ドキュメント部分は基本Markdown
+- and more!!
+
+## 基本的な考え方
+
+1. R Markdownファイルを準備
+2. 中身を記述
+3. レンダリングして出力を確認
+4. 2と3を繰り返す
+5. 完成
+
+## 参考資料
+
+[R Markdown](http://rmarkdown.rstudio.com/)
+
+: 本家のサイト。ここに始まりここに終わります。チュートリアルが最強。
+
+[R Markdownで楽々レポートづくり](http://gihyo.jp/admin/serial/01/r-markdown)
+
+: 日本語でR Markdownがどういうものなのかを解説してあります。
+
+[R Markdown入門](https://kazutan.github.io/HijiyamaR5/rmd_intro.html#/)
+
+: スライドで要点を簡単にまとめています。
+
+# Rで本を作りたい
+
+## ドキュメントをまとめたい
+
+- ドキュメントがだいぶたまってきた
+- テキストをRmdで作りたい
+- 分析の本をつくりたい
+- 薄い本を自作して売っておこづk
+
+できればWebサイトじゃなくてePubやpdfでできないのか?
+
+## bookdownパッケージ
+
+- 複数のRmdファイルをまとめて一冊の書籍ファイルを生成
+    - gitbook形式, ePub形式, pdf形式
+    - 本を通じての図表番号割り振り
+    - 表紙画像もおk
+    - citationも対応
+
+- サンプル
+    - [ggplot2逆引き本](https://kazutan.github.io/ggplot2-gyakubiki-book/)
+
+## 仕組み
+
+- 復数のRmdファイルをまとめ,Pandocで出力
+
+```{dot, echo=FALSE}
+digraph M_K {
+  graph [
+    label = "bookdownの大まかな流れ",
+    rankdir = LR,
+    layout = dot,
+    dpi = 450, 
+  ]
+  
+  node [
+    style = "solid, filled",
+    fillcolor = Purple1,
+    label = ".Rmd"
+  ]
+  A; B; C; D;
+  
+  node [
+    style = "solid, filled",
+    fillcolor = Violet,
+    label = ".md",
+  ]
+  E;
+  
+  node [
+    style = "solid, filled",
+    fillcolor = LightBlue,
+  ]
+  F [label = "gitbook html"];
+  G [label = "ePub"];
+  H [label = "pdf"];
+  
+  A -> D
+  B -> D [label = "merge"]
+  C -> D
+  D -> E [label = "knit"]
+  E -> F
+  E -> G [label = "Pandoc"]
+  E -> H
+  
+}
+```
+
+## 準備
+
+bookdownパッケージ(必須)
+
+: `install.packages("bookdown")`でOK
+
+RStudio(できれば)
+
+: v1.0以上で。
+
+tex環境
+
+: pdf出力に必須。ただしいつものpdf_document以上に罠多し。
+
+ePubビューワ
+
+: ePub出力結果の確認に必要。
+
+# 作り方
+
+## 最低限の構成
+
+以下の要素は基本必要です:
+
+- `_bookdown.yml`
+- `_output.yml`
+- `*.Rmd`
+- `*.Rmd` ...
+
+## `_bookdown.yml`
+
+書籍全体に関する設定を記述します:
+
+```
+book_filename: "R usui book"  # 書籍名(ファイル名になる)
+chapter_name: "ch: "          # この場合 ch: 1 と自動で振られる
+output_dir: "docs"            # 出力先の指定(デフォは"_book")
+rmd_files:                    # 使用するRmdファイルを指定
+  - kosaki.Rmd                  # この順番に束ねます
+  - Rmds/sweet.Rmd              # デフォではファイル名昇順
+```
+
+その他は[本家ドキュメント](https://bookdown.org/yihui/bookdown)の[4.4](https://bookdown.org/yihui/bookdown/configuration.html)とかを参照。
+
+
+## `_output.yml`
+
+output設定を記述します:
+
+```
+bookdown::epub_book: default
+bookdown::gitbook:
+  css: style.css
+  split_by: "rmd"
+  config:
+    toc:
+      before: |
+        <li><a href="./">book title.</a></li>
+      after: |
+        <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+bookdown::pdf_book:
+  keep_tex: yes
+```
+
+その他は[本家ドキュメント](https://bookdown.org/yihui/bookdown)の[3](https://bookdown.org/yihui/bookdown/output-formats.html)とかを参照。
+
+## レンダリング
+
+- RStudioなら,BuildパネルでBuild Bookから選択**(デモ)**
+    - yamlヘッダーを(ちゃんと)作ったRmdファイル(ここではindex.Rmd)があるなら，以下のような感じでOK
+        - gitbook形式: 
+        ```
+        bookdown::render_book("index.Rmd", output_format = "bookdown::gitbook")
+        ```
+        - epub形式: 
+        ```
+        bookdown::render_book("index.Rmd", output_format = "bookdown::epub_book")
+        ```
+        - pdf形式:
+        ```
+        bookdown::render_book("index.Rmd", output_format = "bookdown::pdf_book")
+        ```
+
+# 注意点
+
+## 文字コード
+
+- bookdownがサポートしているのは**UTF-8**のみ
+
+> All R Markdown files must be encoded in UTF-8, especially when they contain multi-byte characters such as Chinese, Japanese, and Korean.
+>
+> --- [Yihui Xie](https://bookdown.org/yihui/bookdown/usage.html)
+
+
+## 日本語見出しについて
+
+- 日本語にももちろん対応
+- ただし，R Markdownいつもの日本語見出し問題は健在
+    - 詳しくは以下を参照:  
+    [第4回　レポつく自由自在 ～R Markdownにまつわるエトセトラ～：R Markdownで楽々レポートづくり｜gihyo.jp … 技術評論社](http://gihyo.jp/admin/serial/01/r-markdown/0004)
+    - `_output.yml`に必要事項を記述してください
+        - よくわからない場合は聞いてください
+
+## pdf & ggplot2 & 日本語の罠
+
+- pdf_book出力形式でggplot2で作成した図に日本語を使用すると文字化け(もしくはエラー)
+    - pdf_book(正確にはpdf_document)の場合，Rチャンクの出力は`dev=pdf()`がデフォ
+    - これが日本語を含むggplot2出力でひっかかる
+- 回避策(暫定的)
+    - `dev=png()`に変更させる
+        - 画質調整しないとpdfで汚くなる
+    - `dev=cairo_pfd()`の利用
+        - でも全体に設定するとhtmlやepubでコケる
+        - トリックはあるけど…(検証中)
+
+## Merge-KnitかKnit-Mergeか
+
+- こういう流れでも可能:
+    - `_bookdown.yml`に`new_session: true`と追記すればOK
+    - 詳しくは[本家ドキュメント](https://bookdown.org/yihui/bookdown)の[1.4](https://bookdown.org/yihui/bookdown/new-session.html)を参照。
+
+```{dot, echo=FALSE}
+digraph M_K {
+  graph [
+    label = "bookdownの大まかな流れ",
+    rankdir = LR,
+    layout = dot,
+    dpi = 450, 
+  ]
+  
+  node [
+    style = "solid, filled",
+    fillcolor = Purple1,
+    label = ".Rmd"
+  ]
+  A; B; C;
+  
+  node [
+    style = "solid, filled",
+    fillcolor = Violet,
+    label = ".md",
+  ]
+  D; E; F; G;
+  
+  node [
+    style = "solid, filled",
+    fillcolor = LightBlue,
+  ]
+  H [label = "gitbook html"];
+  I [label = "ePub"];
+  J [label = "pdf"];
+  
+  A -> D [label = "knit"]
+  B -> E [label = "knit"]
+  C -> F [label = "knit"]
+  D -> G
+  E -> G [label = "merge"]
+  F -> G 
+  G -> H
+  G -> I [label = "Pandoc"]
+  G -> J
+  
+}
+```
+
+# さいごに
+
+## 楽して作りたいんだよ
+
+- 日本語向けに調整した，最小構成のリポジトリをGitHubに作ってました
+    - [kazutan/bookdown_ja_template](https://github.com/kazutan/bookdown_ja_template)
+- いろいろ設定しましたが，以下のリポジトリも参考になるかと
+    - [kazutan/ggplot2-gyakubiki-book](https://github.com/kazutan/ggplot2-gyakubiki-book/)
+- 本家が準備しているデモ用リポジトリも
+    - [rstudio/bookdown-demo](https://github.com/rstudio/bookdown-demo)
+- でもまずは[本家ドキュメント](https://bookdown.org/yihui/bookdown/)を読んでね
+
+## Enjoy!
+
+- 今回の資料をおいてるリポジトリ
+    - [kazutan/JapanR2016](https://github.com/kazutan/JapanR2016)
+- もっと詳しい解説は，**R Advent Calendar 2016**の22日目でまとめる予定
+    - http://qiita.com/advent-calendar/2016/r-rstudio
+- r-wakalangの#rmarkdown，`@kazutan`，#おねがいぞうさん

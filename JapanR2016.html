@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="前田和寛" />
+  <title>Rで本を作りたい</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="JapanR2016_files/reveal.js-3.3.0/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="JapanR2016_files/reveal.js-3.3.0/css/theme/sky.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="for-revealjs.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'JapanR2016_files/reveal.js-3.3.0/css/print/pdf.css' : 'JapanR2016_files/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="JapanR2016_files/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <link href="JapanR2016_files/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Rで本を作りたい</h1>
+    <h2 class="author">前田和寛</h2>
+    <h3 class="date">2016/11/27</h3>
+</section>
+
+<section><section id="はじめに" class="titleslide slide level1"><h1>はじめに</h1></section><section id="自己紹介" class="slide level2">
+<h1>自己紹介</h1>
+<div class="column1">
+<ul>
+<li>比治山大学短期大学部</li>
+<li><span class="citation" data-cites="kazutan">@kazutan</span> (Twitter, GitHub, Qiita)</li>
+<li><a href="http://kz-md.net/" class="uri">http://kz-md.net/</a></li>
+<li><a href="http://blog.kz-md.net/" class="uri">http://blog.kz-md.net/</a></li>
+</ul>
+</div>
+<div class="column2">
+<p><img src="pics/user.png" alt="icon" /></p>
+</div>
+</section></section>
+<section><section id="r-markdwonとは" class="titleslide slide level1"><h1>R Markdwonとは</h1></section><section id="rでドキュメント生成" class="slide level2">
+<h1>Rでドキュメント生成</h1>
+<ul>
+<li>Rはデータ解析</li>
+<li>実はRでドキュメントを生成することが可能
+<ul>
+<li>R Markdownを利用</li>
+<li>その便利さ、その将来性に注目が</li>
+</ul></li>
+</ul>
+</section><section id="rでやるメリット" class="slide level2">
+<h1>Rでやるメリット</h1>
+<ul>
+<li>分析からレポート生成までが完結
+<ul>
+<li>WordもExcelも(そしてぱわぽも)いらない</li>
+<li>コピペ汚染からの開放</li>
+</ul></li>
+<li>再現性の確保
+<ul>
+<li>同一の内容をそのまま再現できる</li>
+</ul></li>
+<li>再利用、配布が簡単
+<ul>
+<li>コードを簡単に再利用可能</li>
+<li>テキストデータなので運用が簡単</li>
+</ul></li>
+<li>作るのが簡単
+<ul>
+<li>ドキュメント部分は基本Markdown</li>
+</ul></li>
+<li>and more!!</li>
+</ul>
+</section><section id="基本的な考え方" class="slide level2">
+<h1>基本的な考え方</h1>
+<ol type="1">
+<li>R Markdownファイルを準備</li>
+<li>中身を記述</li>
+<li>レンダリングして出力を確認</li>
+<li>2と3を繰り返す</li>
+<li>完成</li>
+</ol>
+</section><section id="参考資料" class="slide level2">
+<h1>参考資料</h1>
+<dl>
+<dt><a href="http://rmarkdown.rstudio.com/">R Markdown</a></dt>
+<dd><p>本家のサイト。ここに始まりここに終わります。チュートリアルが最強。</p>
+</dd>
+<dt><a href="http://gihyo.jp/admin/serial/01/r-markdown">R Markdownで楽々レポートづくり</a></dt>
+<dd><p>日本語でR Markdownがどういうものなのかを解説してあります。</p>
+</dd>
+<dt><a href="https://kazutan.github.io/HijiyamaR5/rmd_intro.html#/">R Markdown入門</a></dt>
+<dd><p>スライドで要点を簡単にまとめています。</p>
+</dd>
+</dl>
+</section></section>
+<section><section id="rで本を作りたい" class="titleslide slide level1"><h1>Rで本を作りたい</h1></section><section id="ドキュメントをまとめたい" class="slide level2">
+<h1>ドキュメントをまとめたい</h1>
+<ul>
+<li>ドキュメントがだいぶたまってきた</li>
+<li>テキストをRmdで作りたい</li>
+<li>分析の本をつくりたい</li>
+<li>薄い本を自作して売っておこづk</li>
+</ul>
+<p>できればWebサイトじゃなくてePubやpdfでできないのか?</p>
+</section><section id="bookdownパッケージ" class="slide level2">
+<h1>bookdownパッケージ</h1>
+<ul>
+<li>複数のRmdファイルをまとめて一冊の書籍ファイルを生成
+<ul>
+<li>gitbook形式, ePub形式, pdf形式</li>
+<li>本を通じての図表番号割り振り</li>
+<li>表紙画像もおk</li>
+<li>citationも対応</li>
+</ul></li>
+<li>サンプル
+<ul>
+<li><a href="https://kazutan.github.io/ggplot2-gyakubiki-book/">ggplot2逆引き本</a></li>
+</ul></li>
+</ul>
+</section><section id="仕組み" class="slide level2">
+<h1>仕組み</h1>
+<ul>
+<li>復数のRmdファイルをまとめ,Pandocで出力</li>
+</ul>
+<p><img src="JapanR2016_files/figure-revealjs/unnamed-chunk-1-1.png" width="768" /></p>
+</section><section id="準備" class="slide level2">
+<h1>準備</h1>
+<dl>
+<dt>bookdownパッケージ(必須)</dt>
+<dd><p><code>install.packages(&quot;bookdown&quot;)</code>でOK</p>
+</dd>
+<dt>RStudio(できれば)</dt>
+<dd><p>v1.0以上で。</p>
+</dd>
+<dt>tex環境</dt>
+<dd><p>pdf出力に必須。ただしいつものpdf_document以上に罠多し。</p>
+</dd>
+<dt>ePubビューワ</dt>
+<dd><p>ePub出力結果の確認に必要。</p>
+</dd>
+</dl>
+</section></section>
+<section><section id="作り方" class="titleslide slide level1"><h1>作り方</h1></section><section id="最低限の構成" class="slide level2">
+<h1>最低限の構成</h1>
+<p>以下の要素は基本必要です:</p>
+<ul>
+<li><code>_bookdown.yml</code></li>
+<li><code>_output.yml</code></li>
+<li><code>*.Rmd</code></li>
+<li><code>*.Rmd</code> …</li>
+</ul>
+</section><section id="bookdown.yml" class="slide level2">
+<h1><code>_bookdown.yml</code></h1>
+<p>書籍全体に関する設定を記述します:</p>
+<pre><code>book_filename: &quot;R usui book&quot;  # 書籍名(ファイル名になる)
+chapter_name: &quot;ch: &quot;          # この場合 ch: 1 と自動で振られる
+output_dir: &quot;docs&quot;            # 出力先の指定(デフォは&quot;_book&quot;)
+rmd_files:                    # 使用するRmdファイルを指定
+  - kosaki.Rmd                  # この順番に束ねます
+  - Rmds/sweet.Rmd              # デフォではファイル名昇順</code></pre>
+<p>その他は<a href="https://bookdown.org/yihui/bookdown">本家ドキュメント</a>の<a href="https://bookdown.org/yihui/bookdown/configuration.html">4.4</a>とかを参照。</p>
+</section><section id="output.yml" class="slide level2">
+<h1><code>_output.yml</code></h1>
+<p>output設定を記述します:</p>
+<pre><code>bookdown::epub_book: default
+bookdown::gitbook:
+  css: style.css
+  split_by: &quot;rmd&quot;
+  config:
+    toc:
+      before: |
+        &lt;li&gt;&lt;a href=&quot;./&quot;&gt;book title.&lt;/a&gt;&lt;/li&gt;
+      after: |
+        &lt;li&gt;&lt;a href=&quot;https://github.com/rstudio/bookdown&quot; target=&quot;blank&quot;&gt;Published with bookdown&lt;/a&gt;&lt;/li&gt;
+bookdown::pdf_book:
+  keep_tex: yes</code></pre>
+<p>その他は<a href="https://bookdown.org/yihui/bookdown">本家ドキュメント</a>の<a href="https://bookdown.org/yihui/bookdown/output-formats.html">3</a>とかを参照。</p>
+</section><section id="レンダリング" class="slide level2">
+<h1>レンダリング</h1>
+<ul>
+<li>RStudioなら,BuildパネルでBuild Bookから選択<strong>(デモ)</strong>
+<ul>
+<li>yamlヘッダーを(ちゃんと)作ったRmdファイル(ここではindex.Rmd)があるなら，以下のような感じでOK
+<ul>
+<li><p>gitbook形式:</p>
+<pre><code>bookdown::render_book(&quot;index.Rmd&quot;, output_format = &quot;bookdown::gitbook&quot;)</code></pre></li>
+<li><p>epub形式:</p>
+<pre><code>bookdown::render_book(&quot;index.Rmd&quot;, output_format = &quot;bookdown::epub_book&quot;)</code></pre></li>
+<li><p>pdf形式:</p>
+<pre><code>bookdown::render_book(&quot;index.Rmd&quot;, output_format = &quot;bookdown::pdf_book&quot;)</code></pre></li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="注意点" class="titleslide slide level1"><h1>注意点</h1></section><section id="文字コード" class="slide level2">
+<h1>文字コード</h1>
+<ul>
+<li>bookdownがサポートしているのは<strong>UTF-8</strong>のみ</li>
+</ul>
+<blockquote>
+<p>All R Markdown files must be encoded in UTF-8, especially when they contain multi-byte characters such as Chinese, Japanese, and Korean.</p>
+<p>— <a href="https://bookdown.org/yihui/bookdown/usage.html">Yihui Xie</a></p>
+</blockquote>
+</section><section id="日本語見出しについて" class="slide level2">
+<h1>日本語見出しについて</h1>
+<ul>
+<li>日本語にももちろん対応</li>
+<li>ただし，R Markdownいつもの日本語見出し問題は健在
+<ul>
+<li>詳しくは以下を参照:<br />
+<a href="http://gihyo.jp/admin/serial/01/r-markdown/0004">第4回　レポつく自由自在 ～R Markdownにまつわるエトセトラ～：R Markdownで楽々レポートづくり｜gihyo.jp … 技術評論社</a></li>
+<li><code>_output.yml</code>に必要事項を記述してください
+<ul>
+<li>よくわからない場合は聞いてください</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section id="pdf-ggplot2-日本語の罠" class="slide level2">
+<h1>pdf &amp; ggplot2 &amp; 日本語の罠</h1>
+<ul>
+<li>pdf_book出力形式でggplot2で作成した図に日本語を使用すると文字化け(もしくはエラー)
+<ul>
+<li>pdf_book(正確にはpdf_document)の場合，Rチャンクの出力は<code>dev=pdf()</code>がデフォ</li>
+<li>これが日本語を含むggplot2出力でひっかかる</li>
+</ul></li>
+<li>回避策(暫定的)
+<ul>
+<li><code>dev=png()</code>に変更させる
+<ul>
+<li>画質調整しないとpdfで汚くなる</li>
+</ul></li>
+<li><code>dev=cairo_pfd()</code>の利用
+<ul>
+<li>でも全体に設定するとhtmlやepubでコケる</li>
+<li>トリックはあるけど…(検証中)</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section id="merge-knitかknit-mergeか" class="slide level2">
+<h1>Merge-KnitかKnit-Mergeか</h1>
+<ul>
+<li>こういう流れでも可能:
+<ul>
+<li><code>_bookdown.yml</code>に<code>new_session: true</code>と追記すればOK</li>
+<li>詳しくは<a href="https://bookdown.org/yihui/bookdown">本家ドキュメント</a>の<a href="https://bookdown.org/yihui/bookdown/new-session.html">1.4</a>を参照。</li>
+</ul></li>
+</ul>
+<p><img src="JapanR2016_files/figure-revealjs/unnamed-chunk-2-1.png" width="768" /></p>
+</section></section>
+<section><section id="さいごに" class="titleslide slide level1"><h1>さいごに</h1></section><section id="楽して作りたいんだよ" class="slide level2">
+<h1>楽して作りたいんだよ</h1>
+<ul>
+<li>日本語向けに調整した，最小構成のリポジトリをGitHubに作ってました
+<ul>
+<li><a href="https://github.com/kazutan/bookdown_ja_template">kazutan/bookdown_ja_template</a></li>
+</ul></li>
+<li>いろいろ設定しましたが，以下のリポジトリも参考になるかと
+<ul>
+<li><a href="https://github.com/kazutan/ggplot2-gyakubiki-book/">kazutan/ggplot2-gyakubiki-book</a></li>
+</ul></li>
+<li>本家が準備しているデモ用リポジトリも
+<ul>
+<li><a href="https://github.com/rstudio/bookdown-demo">rstudio/bookdown-demo</a></li>
+</ul></li>
+<li>でもまずは<a href="https://bookdown.org/yihui/bookdown/">本家ドキュメント</a>を読んでね</li>
+</ul>
+</section><section id="enjoy" class="slide level2">
+<h1>Enjoy!</h1>
+<ul>
+<li>今回の資料をおいてるリポジトリ
+<ul>
+<li><a href="https://github.com/kazutan/JapanR2016">kazutan/JapanR2016</a></li>
+</ul></li>
+<li>もっと詳しい解説は，<strong>R Advent Calendar 2016</strong>の22日目でまとめる予定
+<ul>
+<li><a href="http://qiita.com/advent-calendar/2016/r-rstudio" class="uri">http://qiita.com/advent-calendar/2016/r-rstudio</a></li>
+</ul></li>
+<li>r-wakalangの#rmarkdown，<code>@kazutan</code>，#おねがいぞうさん</li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="JapanR2016_files/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="JapanR2016_files/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+        chalkboard: {
+          theme: 'whiteboard',
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'JapanR2016_files/reveal.js-3.3.0/plugin/notes/notes.js', async: true },
+          { src: 'JapanR2016_files/reveal.js-3.3.0/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
