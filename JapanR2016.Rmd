@@ -34,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - http://blog.kz-md.net/
 </div>
 <div class="column2">
-![icon](pics/user.png)
+![icon](https://kazutan.github.io/JapanR2016/pics/user.png)
 </div>
 
 # R Markdwonとは
